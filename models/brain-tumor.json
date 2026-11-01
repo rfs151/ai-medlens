@@ -1,0 +1,19 @@
+{
+  "names": [
+    "meningioma",
+    "glioma",
+    "pituitary tumor"
+  ],
+  "imgsz": 640,
+  "description": "脑 MRI 肿瘤检测 · YOLO11n · 胶质瘤 / 脑膜瘤 / 垂体瘤（Kaggle Brain Tumor YOLO 数据集）",
+  "license": "AGPL-3.0（Ultralytics 基座）· 数据集 Apache-2.0",
+  "source": "https://huggingface.co/amcm/brain-tumor-yolo11n",
+  "metrics": {
+    "map50": 0.961,
+    "map50_95": 0.667,
+    "precision": 0.883,
+    "recall": 0.932,
+    "source": "model card"
+  },
+  "recommended_conf": 0.35
+}

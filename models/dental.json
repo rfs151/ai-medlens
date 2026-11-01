@@ -1,0 +1,20 @@
+{
+  "names": [
+    "caries",
+    "periapical_lesion",
+    "impacted_tooth"
+  ],
+  "imgsz": 640,
+  "description": "口腔全景片检测 · YOLO11n · 龋齿 / 根尖周病变 / 阻生齿（DENTEX + OralXrays-9）",
+  "license": "CC BY-NC 4.0（仅限非商业用途）",
+  "source": "https://huggingface.co/liodon-ai/dental-panoramic-detector",
+  "metrics": {
+    "map50": 0.622,
+    "map50_95": 0.406,
+    "precision": 0.63,
+    "recall": 0.614,
+    "source": "model card"
+  },
+  "recommended_conf": 0.45,
+  "recommended_iou": 0.35
+}

@@ -1,0 +1,6 @@
+# Kvasir-SEG polyp detection (run training/prepare_kvasir.py first)
+path: datasets/polyp   # relative to the current dir (run from project root)
+train: images/train
+val: images/val
+names:
+  0: polyp

@@ -1,0 +1,4 @@
+ultralytics>=8.3      # YOLOv8 / YOLO11
+onnx>=1.15
+onnxslim              # used by ultralytics export simplify=True
+opencv-python>=4.9

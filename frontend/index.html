@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MedLens 医疗影像检测演示</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">MedLens <span>医疗影像 AI 检测演示</span></div>
+  <div class="controls">
+    <label>推理后端
+      <select id="backendSelect">
+        <option value="python">Python · ONNX Runtime</option>
+        <option value="cpp">C++ · Drogon + OpenCV DNN</option>
+      </select>
+    </label>
+    <span id="backendStatus" class="pill">连接中…</span>
+  </div>
+</header>
+
+<div class="disclaimer">⚠ 仅供技术演示，不用于临床诊断。模型均为第三方公开模型，见各菜单下的来源与许可。</div>
+
+<!-- 影像种类菜单：每个菜单对应一个独立模型 -->
+<nav class="menu" id="modalityMenu"></nav>
+
+<main>
+  <section class="modality-head">
+    <div class="intro">
+      <h2 id="modTitle"></h2>
+      <p id="modIntro"></p>
+    </div>
+    <div class="model-card" id="modelCard"></div>
+  </section>
+
+  <nav class="tabs" id="subTabs">
+    <button class="tab active" data-tab="image">图片检测</button>
+    <button class="tab" data-tab="video">视频检测</button>
+    <button class="tab" data-tab="classic">传统算法对比</button>
+  </nav>
+
+  <!-- ========== 图片检测 ========== -->
+  <section id="tab-image" class="panel active">
+    <div class="gallery" id="gallery"></div>
+    <div class="toolbar">
+      <label class="slider">置信度阈值 <input type="range" id="confSlider" min="0.05" max="0.95" step="0.01" value="0.25">
+        <b id="confValue">0.25</b></label>
+      <label class="slider">IoU <input type="range" id="iouSlider" min="0.1" max="0.9" step="0.05" value="0.45">
+        <b id="iouValue">0.45</b></label>
+      <details class="dicom-opts">
+        <summary>DICOM 窗宽窗位</summary>
+        <label>窗位 WC <input type="number" id="wcInput" placeholder="自动"></label>
+        <label>窗宽 WW <input type="number" id="wwInput" placeholder="自动"></label>
+      </details>
+      <button id="downloadBtn" disabled>下载结果图</button>
+      <button id="reportBtn" disabled>导出报告</button>
+    </div>
+    <div class="workspace">
+      <div class="canvas-wrap" id="dropZone">
+        <canvas id="imageCanvas"></canvas>
+        <div class="placeholder" id="imagePlaceholder">选择上方示例图片，或拖拽本地图片 / DICOM 到这里</div>
+      </div>
+      <aside class="side">
+        <h3>检测结果 <small id="boxCount"></small></h3>
+        <div id="sampleCaption" class="hint"></div>
+        <div id="timing" class="timing"></div>
+        <canvas id="countChart" width="320" height="170"></canvas>
+        <table class="result-table">
+          <thead><tr><th>#</th><th>类别</th><th>置信度</th><th>位置 (x1,y1,x2,y2)</th></tr></thead>
+          <tbody id="resultBody"></tbody>
+        </table>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ========== 视频检测 ========== -->
+  <section id="tab-video" class="panel">
+    <div class="toolbar">
+      <span id="videoSamples" class="chips"></span>
+      <label class="file-btn">本地视频
+        <input type="file" id="videoInput" accept="video/*">
+      </label>
+      <button id="cameraBtn" class="secondary">摄像头</button>
+      <button id="videoToggle" disabled>开始检测</button>
+      <label class="slider">置信度 <input type="range" id="vConfSlider" min="0.05" max="0.95" step="0.01" value="0.25">
+        <b id="vConfValue">0.25</b></label>
+      <label class="slider">发送宽度 <select id="sendWidth">
+        <option value="320">320</option><option value="480" selected>480</option>
+        <option value="640">640</option><option value="0">原始</option></select></label>
+    </div>
+    <div class="workspace">
+      <div class="canvas-wrap video-wrap">
+        <video id="video" playsinline muted loop></video>
+        <canvas id="videoOverlay"></canvas>
+        <div class="hud" id="hud"></div>
+      </div>
+      <aside class="side">
+        <h3>实时统计</h3>
+        <div id="videoCaption" class="hint"></div>
+        <div id="videoStats" class="timing"></div>
+        <p class="hint">视频在浏览器本地播放，逐帧压缩为 JPEG 发给后端，后端返回检测框（JSON）后叠加绘制。
+          同时只保留 1 帧在途，推理慢时自动跳帧，延迟不会累积。调小"发送宽度"可以提高帧率。</p>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ========== 传统算法对比（血细胞） ========== -->
+  <section id="tab-classic" class="panel">
+    <div class="gallery" id="classicGallery"></div>
+    <p class="hint">同一张血涂片：左边是传统 OpenCV（HSV 阈值 + 距离变换 + 分水岭，不需要训练），右边是 YOLO 深度学习模型。
+      YOLO 的 5 类白细胞合并为 WBC 后再比较数量。</p>
+    <div class="compare">
+      <div class="compare-col">
+        <h3>传统算法 <small id="classicInfo"></small></h3>
+        <canvas id="classicCanvas"></canvas>
+      </div>
+      <div class="compare-col">
+        <h3>YOLO <small id="yoloInfo"></small></h3>
+        <canvas id="yoloCanvas"></canvas>
+      </div>
+    </div>
+    <table class="result-table compare-table">
+      <thead><tr><th>类别</th><th>传统算法</th><th>YOLO</th></tr></thead>
+      <tbody id="compareBody"></tbody>
+    </table>
+  </section>
+</main>
+
+<footer>MedLens · 仅供技术演示，不用于临床诊断 · 模型与示例数据的来源和许可见各菜单与 README</footer>
+<script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+{
+  "names": [
+    "Basophil",
+    "Eosinophil",
+    "Lymphocyte",
+    "Monocyte",
+    "Neutrophil",
+    "Platelets",
+    "RBC"
+  ],
+  "imgsz": 640,
+  "description": "血细胞检测 · YOLO11n · 红细胞、血小板与 5 类白细胞（Roboflow Blood Cell 数据集）",
+  "license": "Apache-2.0",
+  "source": "https://huggingface.co/Jesteban247/yolo11-blood_cell-onnx",
+  "metrics": {
+    "map50": 0.974,
+    "map50_95": 0.905,
+    "precision": 0.951,
+    "recall": 0.92,
+    "source": "model card"
+  },
+  "recommended_conf": 0.25,
+  "count_groups": {
+    "Basophil": "WBC",
+    "Eosinophil": "WBC",
+    "Lymphocyte": "WBC",
+    "Monocyte": "WBC",
+    "Neutrophil": "WBC",
+    "Platelets": "Platelets",
+    "RBC": "RBC"
+  }
+}

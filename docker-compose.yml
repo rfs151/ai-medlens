@@ -1,0 +1,21 @@
+# docker compose up -d                 -> Python service only (http://<host>:8000)
+# Ports can be changed in .env: MEDLENS_PORT=8010  MEDLENS_CPP_PORT=8091
+# docker compose --profile cpp up -d   -> also the C++ backend on :8081
+services:
+  medlens-py:
+    build: { context: ., dockerfile: docker/Dockerfile.backend }
+    ports: ["${MEDLENS_PORT:-8000}:8000"]
+    volumes: ["./models:/app/models:ro"]
+    environment:
+      MEDLENS_ORT_THREADS: "0"   # 0 = let ONNX Runtime decide
+      MEDLENS_CPP_PORT: "${MEDLENS_CPP_PORT:-8081}"  # host port of the C++ service, shown to the page
+    restart: unless-stopped
+
+  medlens-cpp:
+    profiles: ["cpp"]
+    build: { context: ., dockerfile: docker/Dockerfile.cpp }
+    ports: ["${MEDLENS_CPP_PORT:-8081}:8081"]
+    volumes: ["./models:/app/models:ro"]
+    environment:
+      MEDLENS_POOL_SIZE: "2"
+    restart: unless-stopped

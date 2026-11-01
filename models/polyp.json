@@ -1,0 +1,11 @@
+{
+  "names": [
+    "polyp"
+  ],
+  "imgsz": 640,
+  "description": "结肠镜息肉检测 · YOLOv8 · Kvasir-SEG 1000 张息肉图训练（与示例视频同源：挪威 Bærum 医院）",
+  "license": "MIT（模型权重）· 训练数据 Kvasir-SEG 仅限研究与教学",
+  "source": "https://huggingface.co/pourmand1376/Kvasir-SEG-yolov8",
+  "recommended_conf": 0.3,
+  "max_box_area": 0.4
+}

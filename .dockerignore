@@ -1,0 +1,7 @@
+.venv
+datasets
+runs
+*.pt
+cpp_backend/build
+**/__pycache__
+.git

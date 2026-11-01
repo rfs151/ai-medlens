@@ -1,0 +1,149 @@
+{
+  "polyp": {
+    "images": [
+      {
+        "file": "polyp/colonoscopy_1_frame1.jpg",
+        "caption": "结肠镜检查片段 1 · 第 6.2 秒截帧",
+        "source": "HyperKvasir polyp videos (Borgli et al., Scientific Data 2020) · huggingface.co/datasets/borgli/HyperKvasir-Polyp-Videos",
+        "license": "CC BY 4.0 / MIT"
+      },
+      {
+        "file": "polyp/colonoscopy_1_frame2.jpg",
+        "caption": "结肠镜检查片段 1 · 第 22.8 秒截帧",
+        "source": "HyperKvasir polyp videos (Borgli et al., Scientific Data 2020) · huggingface.co/datasets/borgli/HyperKvasir-Polyp-Videos",
+        "license": "CC BY 4.0 / MIT"
+      },
+      {
+        "file": "polyp/colonoscopy_2_frame1.jpg",
+        "caption": "结肠镜检查片段 2 · 第 5.4 秒截帧",
+        "source": "HyperKvasir polyp videos (Borgli et al., Scientific Data 2020) · huggingface.co/datasets/borgli/HyperKvasir-Polyp-Videos",
+        "license": "CC BY 4.0 / MIT"
+      },
+      {
+        "file": "polyp/colonoscopy_2_frame2.jpg",
+        "caption": "结肠镜检查片段 2 · 第 21.2 秒截帧",
+        "source": "HyperKvasir polyp videos (Borgli et al., Scientific Data 2020) · huggingface.co/datasets/borgli/HyperKvasir-Polyp-Videos",
+        "license": "CC BY 4.0 / MIT"
+      }
+    ],
+    "videos": [
+      {
+        "file": "polyp/colonoscopy_1.mp4",
+        "caption": "结肠镜检查片段 1",
+        "source": "HyperKvasir polyp videos (Borgli et al., Scientific Data 2020) · huggingface.co/datasets/borgli/HyperKvasir-Polyp-Videos",
+        "license": "CC BY 4.0 / MIT"
+      },
+      {
+        "file": "polyp/colonoscopy_2.mp4",
+        "caption": "结肠镜检查片段 2",
+        "source": "HyperKvasir polyp videos (Borgli et al., Scientific Data 2020) · huggingface.co/datasets/borgli/HyperKvasir-Polyp-Videos",
+        "license": "CC BY 4.0 / MIT"
+      }
+    ]
+  },
+  "blood-cell": {
+    "images": [
+      {
+        "file": "blood-cell/bloodimage_00000.jpg",
+        "caption": "血涂片 00000",
+        "source": "BCCD Dataset · github.com/Shenggan/BCCD_Dataset",
+        "license": "MIT"
+      },
+      {
+        "file": "blood-cell/bloodimage_00010.jpg",
+        "caption": "血涂片 00010",
+        "source": "BCCD Dataset · github.com/Shenggan/BCCD_Dataset",
+        "license": "MIT"
+      },
+      {
+        "file": "blood-cell/bloodimage_00023.jpg",
+        "caption": "血涂片 00023",
+        "source": "BCCD Dataset · github.com/Shenggan/BCCD_Dataset",
+        "license": "MIT"
+      }
+    ],
+    "videos": [
+      {
+        "file": "blood-cell/microscope_pan.mp4",
+        "caption": "模拟显微镜视野平移（由 3 张血涂片拼接生成）",
+        "source": "BCCD Dataset · github.com/Shenggan/BCCD_Dataset",
+        "license": "MIT"
+      }
+    ]
+  },
+  "fracture": {
+    "images": [
+      {
+        "file": "fracture/xray_1.jpg",
+        "caption": "骨骼 X 光 1",
+        "source": "Roboflow-100 bone-fracture-7fylg · huggingface.co/datasets/LibreYOLO/bone-fracture-7fylg",
+        "license": "CC BY 4.0"
+      },
+      {
+        "file": "fracture/xray_2.jpg",
+        "caption": "骨骼 X 光 2",
+        "source": "Roboflow-100 bone-fracture-7fylg · huggingface.co/datasets/LibreYOLO/bone-fracture-7fylg",
+        "license": "CC BY 4.0"
+      },
+      {
+        "file": "fracture/xray_3.jpg",
+        "caption": "骨骼 X 光 3",
+        "source": "Roboflow-100 bone-fracture-7fylg · huggingface.co/datasets/LibreYOLO/bone-fracture-7fylg",
+        "license": "CC BY 4.0"
+      }
+    ],
+    "videos": []
+  },
+  "brain-tumor": {
+    "images": [
+      {
+        "file": "brain-tumor/te-gl_14.jpg",
+        "caption": "T1 增强 MRI · 胶质瘤 (glioma)",
+        "source": "Brain Tumor MRI Dataset (M. Nickparvar; figshare / SARTAJ / Br35H) · huggingface.co/datasets/BJyotibrat/Masoud-Nickparvar-Brain-Tumor-MRI-Dataset",
+        "license": "CC BY 4.0"
+      },
+      {
+        "file": "brain-tumor/te-me_10.jpg",
+        "caption": "T1 增强 MRI · 脑膜瘤 (meningioma)",
+        "source": "Brain Tumor MRI Dataset (M. Nickparvar; figshare / SARTAJ / Br35H) · huggingface.co/datasets/BJyotibrat/Masoud-Nickparvar-Brain-Tumor-MRI-Dataset",
+        "license": "CC BY 4.0"
+      },
+      {
+        "file": "brain-tumor/te-pi_11.jpg",
+        "caption": "T1 增强 MRI · 垂体瘤 (pituitary)",
+        "source": "Brain Tumor MRI Dataset (M. Nickparvar; figshare / SARTAJ / Br35H) · huggingface.co/datasets/BJyotibrat/Masoud-Nickparvar-Brain-Tumor-MRI-Dataset",
+        "license": "CC BY 4.0"
+      },
+      {
+        "file": "brain-tumor/te-no_10.jpg",
+        "caption": "T1 增强 MRI · 无肿瘤 (对照)",
+        "source": "Brain Tumor MRI Dataset (M. Nickparvar; figshare / SARTAJ / Br35H) · huggingface.co/datasets/BJyotibrat/Masoud-Nickparvar-Brain-Tumor-MRI-Dataset",
+        "license": "CC BY 4.0"
+      }
+    ],
+    "videos": []
+  },
+  "dental": {
+    "images": [
+      {
+        "file": "dental/panoramic_1.jpg",
+        "caption": "口腔全景片 1（train_8）",
+        "source": "DENTEX Challenge 2023 (Hamamci et al.) · huggingface.co/datasets/tirandazdylan/dentex-panoramic",
+        "license": "CC BY 4.0"
+      },
+      {
+        "file": "dental/panoramic_2.jpg",
+        "caption": "口腔全景片 2（train_29）",
+        "source": "DENTEX Challenge 2023 (Hamamci et al.) · huggingface.co/datasets/tirandazdylan/dentex-panoramic",
+        "license": "CC BY 4.0"
+      },
+      {
+        "file": "dental/panoramic_3.jpg",
+        "caption": "口腔全景片 3（train_33）",
+        "source": "DENTEX Challenge 2023 (Hamamci et al.) · huggingface.co/datasets/tirandazdylan/dentex-panoramic",
+        "license": "CC BY 4.0"
+      }
+    ],
+    "videos": []
+  }
+}
