@@ -6,7 +6,7 @@
 #
 #   ./ctl.sh start | stop | restart | status | logs [py|cpp]
 #
-# 公网（国内 VPS frp 转发）：http://121.41.221.119:8010/  C++ 后端 :8081
+# 公网（国内 VPS frp 转发）：http://47.117.29.74:8010/  C++ 后端 :8081
 set -euo pipefail
 cd "$(dirname "$0")"
 CPP=medlens-cpp
@@ -15,7 +15,7 @@ health() {
   for u in http://127.0.0.1:8010/api/health http://127.0.0.1:8081/api/health; do
     echo "健康检查 $u -> $(curl -s --noproxy '*' -m 5 -o /dev/null -w '%{http_code}' "$u" || true)"
   done
-  echo "公网地址 http://121.41.221.119:8010/"
+  echo "公网地址 http://47.117.29.74:8010/"
 }
 
 case ${1:-status} in
