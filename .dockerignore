@@ -5,3 +5,6 @@ runs
 cpp_backend/build
 **/__pycache__
 .git
+gl_viewer/build
+gl_viewer/build-web
+samples/volume/.cache

@@ -20,6 +20,12 @@
   </div>
 </header>
 
+<!-- 运行环境与推理引擎说明：内容由 app.js 根据服务器 CPU 生成 -->
+<details class="env-info" id="envInfo" hidden>
+  <summary id="envSummary"></summary>
+  <div id="envBody"></div>
+</details>
+
 <div class="disclaimer">⚠ 仅供技术演示，不用于临床诊断。模型均为第三方公开模型，见各菜单下的来源与许可。</div>
 
 <!-- 影像种类菜单：每个菜单对应一个独立模型 -->
@@ -38,6 +44,7 @@
     <button class="tab active" data-tab="image">图片检测</button>
     <button class="tab" data-tab="video">视频检测</button>
     <button class="tab" data-tab="classic">传统算法对比</button>
+    <button class="tab" data-tab="volume" hidden>3D 体渲染</button>
   </nav>
 
   <!-- ========== 图片检测 ========== -->
@@ -124,6 +131,45 @@
       <thead><tr><th>类别</th><th>传统算法</th><th>YOLO</th></tr></thead>
       <tbody id="compareBody"></tbody>
     </table>
+  </section>
+  <!-- ========== 3D 体渲染（C++ / OpenGL → WebAssembly + WebGL2） ========== -->
+  <section id="tab-volume" class="panel">
+    <div class="toolbar vol-toolbar">
+      <label>序列 <select id="volChannel"></select></label>
+      <label>渲染 <select id="volMode">
+        <option value="0">体渲染 (DVR)</option><option value="1">最大密度投影 (MIP)</option></select></label>
+      <label>配色 <select id="volPreset">
+        <option value="1">暖色组织</option><option value="0">灰度</option><option value="2">表面</option></select></label>
+      <label class="slider">脑组织 <input type="range" id="volBrain" min="0" max="1" step="0.01" value="0.3"></label>
+      <label class="slider">剖切 <input type="range" id="volClip" min="-1" max="1" step="0.01" value="1"></label>
+      <label class="slider">窗位 <input type="range" id="volWinLo" min="0" max="0.9" step="0.01" value="0.08"></label>
+      <label class="slider">窗宽上限 <input type="range" id="volWinHi" min="0.1" max="1" step="0.01" value="0.92"></label>
+      <label>布局 <select id="volLayout"><option value="0">四分格</option><option value="1">仅 3D</option></select></label>
+      <label class="check"><input type="checkbox" id="volPlanes" checked> 3D 中显示切面</label>
+      <button id="volReset" class="secondary">重置视角</button>
+    </div>
+    <div class="workspace">
+      <div class="vol-wrap" id="volWrap">
+        <canvas id="mvCanvas" tabindex="0"></canvas>
+        <div class="vol-label q1">横断面 Axial</div>
+        <div class="vol-label q2">3D</div>
+        <div class="vol-label q3">冠状面 Coronal</div>
+        <div class="vol-label q4">矢状面 Sagittal</div>
+        <div class="placeholder" id="volStatus">加载中…</div>
+      </div>
+      <aside class="side">
+        <h3>肿瘤分区 <small>来自数据集的专家标注</small></h3>
+        <div id="volTumour" class="vol-tumour"></div>
+        <label class="slider">肿瘤不透明度 <input type="range" id="volTumourOpacity" min="0" max="1" step="0.01" value="0.9"></label>
+        <h3>光标处</h3>
+        <div id="volCursor" class="timing">-</div>
+        <div id="volSource" class="hint"></div>
+        <p class="hint">操作：在 3D 视图拖动旋转、滚轮缩放；在三个切面上点击或拖动移动十字光标，滚轮逐层翻页。
+          "剖切"沿视线方向切开脑组织，切面显示为不透明的斜切片。</p>
+        <p class="hint">实现：同一套 C++17 代码编译成两个版本——桌面版（GLFW + OpenGL 3.3，Linux / Windows / macOS）和这里的网页版
+          （Emscripten → WebAssembly + WebGL2，即 OpenGL ES 3.0）。渲染全部在浏览器本地 GPU 上完成，与右上角选择的推理后端无关。</p>
+      </aside>
+    </div>
   </section>
 </main>
 

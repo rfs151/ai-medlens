@@ -28,6 +28,7 @@ from fastapi.staticfiles import StaticFiles
 
 from . import __version__
 from .cells_classic import count_cells
+from .hwinfo import hardware_info
 from .imaging import ImageDecodeError, decode_image, encode_png
 from .registry import ModelRegistry
 from .render import draw_boxes
@@ -83,6 +84,7 @@ def health():
     body = {"status": "ok", "backend": BACKEND_NAME, "version": __version__, "models": len(registry.list())}
     if os.getenv("MEDLENS_CPP_PORT"):  # tells the page where the C++ backend listens (same host)
         body["cpp_port"] = int(os.environ["MEDLENS_CPP_PORT"])
+    body["hardware"] = hardware_info()  # CPU of this server, used by the page's engine notes
     return body
 
 

@@ -145,5 +145,26 @@
       }
     ],
     "videos": []
+  },
+  "volume3d": {
+    "volumes": [
+      {
+        "file": "volume/brats_206.mlvol.gz",
+        "caption": "脑胶质瘤 MRI · BRATS_206",
+        "dims": [
+          142,
+          178,
+          136
+        ],
+        "channels": [
+          "FLAIR",
+          "T1Gd",
+          "T2"
+        ],
+        "source": "Medical Segmentation Decathlon Task01_BrainTumour (BraTS)",
+        "url": "http://medicaldecathlon.com/",
+        "license": "CC BY-SA 4.0"
+      }
+    ]
   }
 }

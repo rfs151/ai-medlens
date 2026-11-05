@@ -9,3 +9,7 @@ models/*.onnx
 !models/.gitkeep
 cpp_backend/build/
 samples/private/
+gl_viewer/build/
+gl_viewer/build-web/
+samples/volume/.cache/
+.env

@@ -19,6 +19,7 @@
 - **视频实时检测**：内镜视频 / 本地视频 / 摄像头，显示 FPS 和延迟
 - **双后端**：Python（FastAPI + ONNX Runtime）和 C++（Drogon + OpenCV DNN）提供同一套接口，页面一键切换对比延迟
 - **专业细节**：DICOM 读取与窗宽窗位、置信度阈值滑块（按模型卡推荐值初始化）、模型指标卡片、检测报告导出
+- **3D 体渲染（C++ / OpenGL）**：脑胶质瘤 MRI 的 GPU 光线投射体渲染 + 三视图（MPR）。同一套 C++17 代码编译成桌面程序（GLFW + OpenGL 3.3）和网页版（Emscripten → WebAssembly + WebGL2），详见下文
 
 <!-- TODO: 演示 GIF -->
 
@@ -67,6 +68,9 @@ C++ 后端、部署、性能测试，以及用自己的数据训练模型（可�
 浏览器 (HTML/JS) ──HTTP / WebSocket──► FastAPI ──► ONNX Runtime ──► JSON 检测框 ──► 前端 canvas 画框
                  └──HTTP────────────► Drogon (C++) ──► OpenCV DNN ──┘
                          models/<name>.onnx + <name>.json（两个后端共用）
+
+浏览器 ──加载──► gl/medlens_volume.wasm（C++ 编译）──► WebGL2 ──► 本地 GPU 渲染 3D 体数据
+桌面   ──────── medlens_volume（同一套 C++）──────► OpenGL 3.3
 ```
 
 ## 目录
@@ -76,12 +80,52 @@ C++ 后端、部署、性能测试，以及用自己的数据训练模型（可�
 | `backend/` | FastAPI 服务、推理核心、DICOM、传统细胞计数、测试 |
 | `frontend/` | 单页前端（无构建步骤） |
 | `cpp_backend/` | Drogon + OpenCV DNN C++ 服务、推理基准程序 |
+| `gl_viewer/` | C++ / OpenGL 3D 体渲染查看器（桌面 + WebAssembly），编译产物在 `frontend/gl/` |
+| `scripts/fetch_volume.py` | 下载一例脑肿瘤 MRI 体数据并转换为 `samples/volume/*.mlvol.gz` |
 | `scripts/fetch_models.py` | 下载第三方模型并生成 `models/<名称>.json`（类别、指标、推荐阈值、许可） |
 | `scripts/fetch_samples.py` | 下载并生成示例图片 / 视频和 `samples/manifest.json` |
 | `samples/` | 每个菜单的示例素材 |
 | `training/` | 可选：用自己的数据训练、导出、评估 |
 | `scripts/benchmark.py` | 多后端延迟 / 吞吐对比 |
 | `docs/DESIGN.md` | 设计方案与开发步骤 |
+
+## 3D 体渲染（C++ / OpenGL）
+
+菜单"3D 体渲染"展示一例脑胶质瘤 MRI（BraTS，142×178×136，FLAIR / T1 增强 / T2 三个序列）和专家标注的肿瘤三个分区：
+
+- **2×2 工作站布局**：横断面 / 冠状面 / 矢状面三视图（MPR）+ 3D 视图。点击切面移动十字光标，三个视图联动，3D 视图中用彩色轮廓线标出切面位置
+- **GPU 光线投射**：片元着色器里逐像素求光线与体数据包围盒的交点，从前往后采样合成；1D 传输函数查表、中心差分梯度光照、按梯度强调组织边界、步长变化时的不透明度校正、抖动起点消除条纹、不透明后提前终止
+- **两种模式**：体渲染（DVR）和最大密度投影（MIP），三种配色预设，窗宽窗位
+- **剖切**：沿视线方向的解析剖切面，切面显示为不透明的斜切片
+- **肿瘤分区**：标注在 CPU 端做 3×3×3 平滑后存成 RGBA 3D 纹理，三线性采样得到光滑的等值面；水肿画成半透明外壳，透出内部的肿瘤核心；三个分区可单独开关，并统计体积（ml）
+- **渐进式渲染**：交互时 3D 视图降到 50% 分辨率和 2 倍步长渲染到 FBO，停止 0.25 秒后自动以全分辨率重绘；空闲时不发出任何 GL 调用
+
+**跨平台设计**（`gl_viewer/src/`）：
+
+| 文件 | 作用 |
+|---|---|
+| `gl_api.h/.cc` | 平台抽象：网页直接用 OpenGL ES 3.0；桌面在运行时通过 `glfwGetProcAddress` 加载 OpenGL 3.3 函数（自写加载器，不依赖 GLEW / glad） |
+| `shaders.h` | GLSL 只写一份，限定在 GLSL 3.30 与 GLSL ES 3.00 的公共子集，编译时只替换 `#version` 头 |
+| `gl_objects.h/.cc` | 纹理 / FBO / 着色器程序的 RAII 封装（只能移动、析构时释放） |
+| `volume.h/.cc` | `.mlvol` 解析、肿瘤掩膜平滑、体积统计 |
+| `viewer.h/.cc` | 与平台无关的查看器：布局、相机（四元数轨迹球）、交互、脏标记与渐进式渲染 |
+| `main_native.cc` | 桌面入口：GLFW 窗口、键鼠、HiDPI；另有离屏截图 `--screenshot` 和基准测试 `--bench` 模式 |
+| `main_web.cc` | 网页入口：WebGL2 上下文、鼠标 / 触摸 / 滚轮事件、requestAnimationFrame 循环、导出给页面的 C 接口 |
+
+```bash
+python scripts/fetch_volume.py                      # 下载约 9 MB（HTTP 分段读取 7.6 GB 的 tar 包中的两个文件）
+
+# 桌面版（Ubuntu：apt install libglfw3-dev zlib1g-dev libgl-dev）
+cmake -S gl_viewer -B gl_viewer/build && cmake --build gl_viewer/build
+gl_viewer/build/medlens_volume samples/volume/brats_206.mlvol.gz
+gl_viewer/build/medlens_volume samples/volume/brats_206.mlvol.gz --screenshot shot.png --layout 1 --clip 0
+
+# 网页版（需要 Emscripten SDK），产物自动复制到 frontend/gl/
+emcmake cmake -S gl_viewer -B gl_viewer/build-web && cmake --build gl_viewer/build-web
+```
+
+网页版编译产物（JS 58 KB + wasm 62 KB）已提交在 `frontend/gl/`，部署时不需要 Emscripten。
+已在 Linux（Mesa）和 Chrome（WebGL2）上验证。Windows（MSVC + vcpkg：`glfw3`、`zlib`、`opengl-registry` 提供 `GL/glcorearb.h`）和 macOS 按标准 CMake 写法准备，尚未实机编译验证。
 
 ## 模型指标
 
@@ -131,6 +175,7 @@ C++ 后端、部署、性能测试，以及用自己的数据训练模型（可�
 | [Roboflow-100 bone-fracture](https://huggingface.co/datasets/LibreYOLO/bone-fracture-7fylg) | CC BY 4.0 |
 | [Brain Tumor MRI Dataset](https://huggingface.co/datasets/BJyotibrat/Masoud-Nickparvar-Brain-Tumor-MRI-Dataset) — M. Nickparvar | CC BY 4.0 |
 | [DENTEX](https://huggingface.co/datasets/tirandazdylan/dentex-panoramic) — Hamamci et al. | CC BY 4.0 |
+| [Medical Segmentation Decathlon](http://medicaldecathlon.com/) Task01_BrainTumour（BraTS）— 3D 体渲染数据，`samples/volume/` 为裁剪并转换为 8 位后的衍生数据 | CC BY-SA 4.0 |
 
 模型权重不放进仓库，用 `scripts/fetch_models.py` 下载。页面上每张示例图下方都标注了来源和许可。
 
